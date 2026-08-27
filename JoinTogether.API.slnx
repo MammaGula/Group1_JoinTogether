@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="JoinTogether.API/JoinTogether.API.csproj" />
+  <Project Path="JoinTogether.BLL/JoinTogether.BLL.csproj" />
+  <Project Path="JoinTogether.DAL/JoinTogether.DAL.csproj" />
+  <Project Path="JoinTogether.Shared/JoinTogether.Shared.csproj" />
+</Solution>
