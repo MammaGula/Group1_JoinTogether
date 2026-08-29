@@ -1,8 +1,13 @@
-﻿using System;
+﻿namespace JoinTogether.DAL.Entities;
 
-public class Class1
+public class ActivityParticipant
 {
-	public Class1()
-	{
-	}
+    public int Id { get; set; }
+    public DateTime JoinedAt { get; set; } = DateTime.UtcNow;
+
+    public int ActivityId { get; set; }
+    public Activity Activity { get; set; } = null!;
+
+    public string UserId { get; set; } = string.Empty;
+    public ApplicationUser User { get; set; } = null!;
 }

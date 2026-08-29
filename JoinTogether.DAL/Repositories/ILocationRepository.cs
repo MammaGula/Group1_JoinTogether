@@ -1,8 +1,8 @@
-﻿using System;
+﻿using JoinTogether.DAL.Entities;
 
-public class Class1
+namespace JoinTogether.DAL.Repositories;
+
+public interface ILocationRepository : IGenericRepository<Location>
 {
-	public Class1()
-	{
-	}
+    Task<Location?> GetWithQuizAsync(int locationId);
 }

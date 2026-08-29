@@ -1,8 +1,11 @@
-﻿using System;
+﻿namespace JoinTogether.DAL.Repositories;
 
-public class Class1
+public interface IGenericRepository<T> where T : class
 {
-	public Class1()
-	{
-	}
+    Task<T?> GetByIdAsync(int id);
+    Task<List<T>> GetAllAsync();
+    Task AddAsync(T entity);
+    void Update(T entity);
+    void Remove(T entity);
+    Task<int> SaveChangesAsync();
 }

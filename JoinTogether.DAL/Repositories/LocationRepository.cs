@@ -1,8 +1,16 @@
-﻿using System;
+﻿using JoinTogether.DAL.Data;
+using JoinTogether.DAL.Entities;
+using Microsoft.EntityFrameworkCore;
 
-public class Class1
+namespace JoinTogether.DAL.Repositories;
+
+public class LocationRepository : GenericRepository<Location>, ILocationRepository
 {
-	public Class1()
-	{
-	}
+    public LocationRepository(AppDbContext context) : base(context) { }
+
+    public async Task<Location?> GetWithQuizAsync(int locationId) =>
+        await DbSet
+            .Include(l => l.QuizQuestions)
+                .ThenInclude(q => q.Options)
+            .FirstOrDefaultAsync(l => l.Id == locationId);
 }

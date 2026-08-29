@@ -1,8 +1,12 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
 
-public class Class1
+namespace JoinTogether.DAL.Entities;
+
+public class ApplicationUser : IdentityUser
 {
-	public Class1()
-	{
-	}
+    public string? FullName { get; set; }
+
+    public ICollection<QuizAttempt> QuizAttempts { get; set; } = new List<QuizAttempt>();
+    public ICollection<Activity> CreatedActivities { get; set; } = new List<Activity>();
+    public ICollection<ActivityParticipant> ActivityParticipations { get; set; } = new List<ActivityParticipant>();
 }

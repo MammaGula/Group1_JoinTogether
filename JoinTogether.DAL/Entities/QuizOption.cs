@@ -1,8 +1,11 @@
-﻿using System;
+﻿namespace JoinTogether.DAL.Entities;
 
-public class Class1
+public class QuizOption
 {
-	public Class1()
-	{
-	}
+    public int Id { get; set; }
+    public string Text { get; set; } = string.Empty;
+    public bool IsCorrect { get; set; }
+
+    public int QuizQuestionId { get; set; }
+    public QuizQuestion QuizQuestion { get; set; } = null!;
 }
