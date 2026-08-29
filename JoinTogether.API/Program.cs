@@ -1,8 +1,12 @@
+using JoinTogether.DAL;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+
+builder.Services.AddDataAccess(builder.Configuration);
 
 var app = builder.Build();
 
