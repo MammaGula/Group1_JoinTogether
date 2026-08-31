@@ -21,5 +21,7 @@ public class LocationDetailDto
     public double Latitude { get; set; }
     public double Longitude { get; set; }
     public string? Category { get; set; }
+
+    // Number of quiz questions for this location (but not the questions themselves)
     public int QuizQuestionCount { get; set; }
 }
