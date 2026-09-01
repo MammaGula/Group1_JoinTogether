@@ -12,11 +12,24 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
+// Add CORS policy
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowClient", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 builder.Services.AddDataAccess(builder.Configuration);
 
+// Add business logic services
 builder.Services.AddScoped<ILocationService, LocationService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
+// Add JWT authentication
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 
 builder.Services.AddAuthentication(options =>
@@ -43,6 +56,8 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 
 app.UseHttpsRedirection();
+
+app.UseCors("AllowClient");
 
 app.UseAuthentication();
 
