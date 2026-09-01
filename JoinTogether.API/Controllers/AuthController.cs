@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace JoinTogether.API.Controllers;
 
+// AuthController handles user authentication, including registration and login.
 [ApiController]
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
