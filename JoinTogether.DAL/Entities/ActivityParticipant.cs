@@ -1,5 +1,7 @@
 ﻿namespace JoinTogether.DAL.Entities;
 
+
+// Junction table for many-to-many relationship between Activity and ApplicationUser
 public class ActivityParticipant
 {
     public int Id { get; set; }
