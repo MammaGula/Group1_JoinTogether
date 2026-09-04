@@ -1,10 +1,11 @@
 using System.Text;
 using JoinTogether.DAL;
 using JoinTogether.BLL.Interfaces;
-using JoinTogether.BLL.Services; 
+using JoinTogether.BLL.Services;
+using JoinTogether.DAL.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -52,6 +53,12 @@ builder.Services.AddAuthentication(options =>
 });
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.Migrate();
+}
 
 // Configure the HTTP request pipeline.
 

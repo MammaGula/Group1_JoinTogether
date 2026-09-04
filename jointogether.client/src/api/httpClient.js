@@ -1,10 +1,14 @@
 // - Thin wrapper around fetch for talking to the JoinTogether API.
 // - The base URL comes from the environment so it can point at a local
 // - dotnet run instance in development and a deployed API in production.
-import { getToken } from "../context/AuthContext";
 
+const TOKEN_KEY = "jointogether_token";
 const BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "https://localhost:7211/api";
+
+function getToken() {
+  return localStorage.getItem(TOKEN_KEY);
+}
 
 /**
  * Sends a JSON request and returns the parsed response body.
