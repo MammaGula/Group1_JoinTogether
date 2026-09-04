@@ -1,12 +1,23 @@
-import {AuthProvider} from './context/AuthContext';
-import {BrowserRouter, Routes, Route} from 'react-router-dom';
-import {AuthPage} from './pages/AuthPage';
-import {HomePage} from './pages/HomePage';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { AuthPage } from './pages/AuthPage';
+import { HomePage } from './pages/HomePage';
 import './pages/AuthPage.css';
 
 function AppRoutes() {
-  const { isAuthenticated } = useAuth();
-  return isAuthenticated ? <HomePage /> : <AuthPage />;
+  const { authed } = useAuth();
+
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={authed ? <HomePage /> : <AuthPage />} />
+        <Route
+          path="*"
+          element={authed ? <Navigate to="/" replace /> : <AuthPage />}
+        />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
 
