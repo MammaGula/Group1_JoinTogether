@@ -1,11 +1,11 @@
-export function FormField({ id,label, error, ...inputProps }) {
+export function FormField({ id, label, error, ...inputProps }) {
     return (
         <div className="form-field">
-            <label htmlFor={id} className="form-label">
+            <label htmlFor={id} className="form-field__label">
                 {label}
             </label>
-            <input id={id} className="form-input" {...inputProps} />
-            {error && <span className="error">{error}</span>}
+            <input id={id} className="form-field__input" {...inputProps} />
+            {error && <span className="form-field__error">{error}</span>}
         </div>
     )
 }

@@ -13,10 +13,13 @@
 /* --- Info panel --- */
 
 .auth-info {
+  position: relative;
   background: var(--canvas);
   padding: 64px 56px;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   gap: 40px;
 }
 
@@ -28,6 +31,9 @@
 }
 
 .auth-info__brand {
+  position: absolute;
+  top: 32px;
+  left: 32px;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -36,11 +42,22 @@
   color: var(--ink);
 }
 
+@media (max-width: 900px) {
+  .auth-info__brand {
+    top: 20px;
+    left: 20px;
+  }
+}
+
 .auth-info__brand-dot {
   width: 9px;
   height: 9px;
   border-radius: 50%;
   background: var(--accent);
+}
+
+.auth-info__copy {
+  transform: translateX(-40px);
 }
 
 .auth-info__copy h1 {
@@ -69,7 +86,8 @@
   width: 100%;
   max-width: 380px;
   height: auto;
-  align-self: flex-start;
+  align-self: center;
+  transform: translateX(-40px);
 }
 
 @media (max-width: 900px) {
