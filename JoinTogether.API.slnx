@@ -3,4 +3,5 @@
   <Project Path="JoinTogether.BLL/JoinTogether.BLL.csproj" />
   <Project Path="JoinTogether.DAL/JoinTogether.DAL.csproj" />
   <Project Path="JoinTogether.Shared/JoinTogether.Shared.csproj" />
+  <Project Path="JoinTogether.Tests/JoinTogether.Tests.csproj" />
 </Solution>

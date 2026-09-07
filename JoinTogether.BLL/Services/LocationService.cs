@@ -16,7 +16,7 @@ public class LocationService : ILocationService
     // --- Browse all locations ---
     public async Task<List<LocationSummaryDto>> GetAllLocationsAsync()
     {
-        var locations = await _locationRepository.GetAllAsync();
+        var locations = await _locationRepository.GetAllWithQuizAsync();
 
         return locations.Select(l => new LocationSummaryDto
         {
@@ -26,7 +26,7 @@ public class LocationService : ILocationService
             Latitude = l.Latitude,
             Longitude = l.Longitude,
             Category = l.Category,
-            QuizQuestionCount = l.QuizQuestions?.Count ?? 0
+            QuizQuestionCount = l.QuizQuestions.Count
         }).ToList();
     }
 
