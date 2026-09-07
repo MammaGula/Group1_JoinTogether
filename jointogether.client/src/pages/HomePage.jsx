@@ -1,8 +1,12 @@
+import { CityMapInteractive } from '../components/CityMapInteractive';
+
 export function HomePage() {
   return (
     <div>
       <h1>JoinTogether</h1>
       <p>You are logged in!</p>
+
+      <CityMapInteractive />
     </div>
   );
 }
