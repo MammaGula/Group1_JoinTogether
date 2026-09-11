@@ -29,6 +29,7 @@ builder.Services.AddDataAccess(builder.Configuration);
 // Add business logic services
 builder.Services.AddScoped<ILocationService, LocationService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IQuizService, JoinTogether.BLL.Services.QuizService>(); // add this line
 
 // Add JWT authentication
 var jwtSettings = builder.Configuration.GetSection("Jwt");
