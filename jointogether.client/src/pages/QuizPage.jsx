@@ -1,13 +1,6 @@
-import { useParams } from 'react-router-dom';
+import { useParams } from "react-router-dom";
 
 export function QuizPage() {
   const { locationId } = useParams();
-
-  return (
-    <div className="quiz-page">
-      <h1>Quiz for location {locationId}</h1>
-    </div>
-  );
+  return <div>Quiz for location {locationId} — coming soon</div>;
 }
-
-export default QuizPage;
