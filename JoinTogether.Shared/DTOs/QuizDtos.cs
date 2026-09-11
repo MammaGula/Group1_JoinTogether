@@ -15,7 +15,8 @@ public class QuizQuestionDto
     public List<QuizOptionDto> Options { get; set; } = new();
 }
 
-// Returned by GET /api/location/{id}/quiz
+
+// Returned by GET api/Quiz/location/{locationId}
 public class LocationQuizDto
 {
     public int LocationId { get; set; }
