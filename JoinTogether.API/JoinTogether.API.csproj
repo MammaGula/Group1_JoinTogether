@@ -21,8 +21,4 @@
 		<ProjectReference Include="..\JoinTogether.Shared\JoinTogether.Shared.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Controllers\" />
-	</ItemGroup>
-
 </Project>
