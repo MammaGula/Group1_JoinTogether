@@ -62,6 +62,8 @@ export function QuizPage() {
     );
   }
 
+  if (!quiz) return null;
+
   const questions = quiz.questions ?? [];
   const currentQuestion = questions[questionIndex];
 
