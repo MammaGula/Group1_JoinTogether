@@ -20,7 +20,11 @@ export function QuizPage() {
 
   const [stage, setStage] = useState(STAGE.START);
   const [questionIndex, setQuestionIndex] = useState(0);
-  const [selectedOptionId, setSelectedOptionId] = useState(null);
+
+  // Stores the selected option for every question, keyed by question id,
+  // e.g. { 1: 3, 2: 7 } — so answers survive moving between questions
+  // and are all available at once when it's time to submit the quiz (US-09).
+  const [answers, setAnswers] = useState({});
 
   useEffect(() => {
     let isMounted = true;
@@ -58,17 +62,28 @@ export function QuizPage() {
     );
   }
 
+  if (!quiz) return null;
+
   const questions = quiz.questions ?? [];
   const currentQuestion = questions[questionIndex];
 
+  // The selected option for the question currently on screen, derived from
+  // the answers map.
+  const selectedOptionId = currentQuestion
+    ? (answers[currentQuestion.id] ?? null)
+    : null;
+
   const handleStart = () => {
     setQuestionIndex(0);
-    setSelectedOptionId(null);
+    setAnswers({});
     setStage(STAGE.QUESTION);
   };
 
   const handleSelectOption = (optionId) => {
-    setSelectedOptionId(optionId);
+    setAnswers((prev) => ({
+      ...prev,
+      [currentQuestion.id]: optionId,
+    }));
   };
 
   const handleNext = () => {
@@ -76,7 +91,6 @@ export function QuizPage() {
 
     if (questionIndex + 1 < questions.length) {
       setQuestionIndex((i) => i + 1);
-      setSelectedOptionId(null);
     } else {
       setStage(STAGE.DONE);
     }
@@ -136,7 +150,13 @@ export function QuizPage() {
           <span className="quiz-progress__label">
             Fråga {questionIndex + 1} av {questions.length}
           </span>
-          <div className="quiz-progress__track">
+          <div
+            className="quiz-progress__track"
+            role="progressbar"
+            aria-valuenow={questionIndex + 1}
+            aria-valuemin={1}
+            aria-valuemax={questions.length}
+          >
             <div
               className="quiz-progress__fill"
               style={{ width: `${progressPercent}%` }}
@@ -146,10 +166,13 @@ export function QuizPage() {
 
         <p className="quiz-question">{currentQuestion.text}</p>
 
-        <div className="quiz-options">
+        <div className="quiz-options" role="radiogroup">
           {currentQuestion.options.map((option) => (
             <button
               key={option.id}
+              type="button"
+              role="radio"
+              aria-checked={selectedOptionId === option.id}
               className={
                 "quiz-option" +
                 (selectedOptionId === option.id ? " quiz-option--selected" : "")
