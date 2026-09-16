@@ -15,12 +15,15 @@ public class QuizServiceTests
 {
     // mock repository to simulate data access without hitting a real database.
     private readonly Mock<ILocationRepository> _repoMock = new();
+    private readonly Mock<IGenericRepository<QuizAttempt>> _attemptMock = new();
     private readonly QuizService _sut;
 
     public QuizServiceTests()
     {
-        _sut = new QuizService(_repoMock.Object);
+        _sut = new QuizService(_repoMock.Object, _attemptMock.Object);
     }
+    
+
 
     // Test 1: Verify that GetQuizByLocationIdAsync returns null when the location is not found.
     [Fact]
