@@ -13,6 +13,10 @@ namespace JoinTogether.Tests.DAL;
 /// </summary>
 public class LocationRepositoryTests
 {
+    public LocationRepositoryTests()
+    {
+        LocationTestData.ResetCounters();
+    }
     // Test 1. Test that GetAllWithQuizAsync eagerly loads the quiz questions for each location
     [Fact]
     public async Task GetAllWithQuizAsync_LoadsQuizQuestionsEagerly()

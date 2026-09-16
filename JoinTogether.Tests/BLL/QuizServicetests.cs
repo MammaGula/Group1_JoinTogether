@@ -20,6 +20,7 @@ public class QuizServiceTests
 
     public QuizServiceTests()
     {
+        LocationTestData.ResetCounters();
         _sut = new QuizService(_repoMock.Object, _attemptMock.Object);
     }
     

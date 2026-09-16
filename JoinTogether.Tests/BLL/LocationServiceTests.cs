@@ -21,6 +21,7 @@ public class LocationServiceTests
     // Constructor: Initialize the SUT (System Under Test) with the mocked repository.
     public LocationServiceTests()
     {
+        LocationTestData.ResetCounters();
         _sut = new LocationService(_repoMock.Object);
     }
 
