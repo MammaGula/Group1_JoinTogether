@@ -23,3 +23,27 @@ public class LocationQuizDto
     public string LocationName { get; set; } = string.Empty;
     public List<QuizQuestionDto> Questions { get; set; } = new();
 }
+
+
+// Sent by the client when submitting quiz answers.
+public class QuizAnswerDto
+{
+    public int QuestionId { get; set; }
+    public int SelectedOptionId { get; set; }
+}
+
+
+public class SubmitQuizRequest
+{
+    public int LocationId { get; set; }
+    public List<QuizAnswerDto> Answers { get; set; } = new();
+}
+
+// Returned by POST api/Quiz/submit
+public class QuizResultDto
+{
+    public int TotalQuestions { get; set; }
+    public int CorrectAnswers { get; set; }
+    public double ScorePercent { get; set; }
+    public bool Passed { get; set; }
+}

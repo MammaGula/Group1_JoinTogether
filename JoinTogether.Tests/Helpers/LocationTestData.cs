@@ -2,14 +2,17 @@ using JoinTogether.DAL.Entities;
 
 namespace JoinTogether.Tests.Helpers;
 
-/// <summary>
-/// Static helper: Builders for Location-related test entities, so individual test files
-/// Create objects of Location, QuizQuestion, and QuizOption 
-/// don't each hand-roll object graphs.
-/// </summary>
 public static class LocationTestData
 {
-    // 1. Create a Location with a specified number of quiz questions
+    private static int _questionIdCounter = 1;
+    private static int _optionIdCounter = 1;
+
+    public static void ResetCounters()
+    {
+        _questionIdCounter = 1;
+        _optionIdCounter = 1;
+    }
+
     public static Location CreateLocation(
         string name = "Turning Torso",
         int questionCount = 0)
@@ -30,21 +33,24 @@ public static class LocationTestData
 
         return location;
     }
-    
 
-    // 2. Create a QuizQuestion with a specified number of options
     public static QuizQuestion CreateQuestion(
         string text = "What year was this built?",
         int optionCount = 2)
     {
-        var question = new QuizQuestion { QuestionText = text };
+        var question = new QuizQuestion
+        {
+            Id = _questionIdCounter++,
+            QuestionText = text
+        };
 
         for (var i = 0; i < optionCount; i++)
         {
             question.Options.Add(new QuizOption
             {
+                Id = _optionIdCounter++,
                 Text = $"Option {i + 1}",
-                IsCorrect = i == 0 // first option is correct by default
+                IsCorrect = i == 0
             });
         }
 
