@@ -7,7 +7,7 @@ namespace JoinTogether.BLL.Services;
 
 public class QuizService : IQuizService
 {
-    private const double PassThreshold = 80.0; // percent
+    private const double PassThreshold = 75.0; // percent
 
     private readonly ILocationRepository _locationRepo;
     private readonly IGenericRepository<QuizAttempt> _attemptRepo;

@@ -1,6 +1,7 @@
 ﻿using JoinTogether.BLL.Services;
 using JoinTogether.DAL.Entities;
 using JoinTogether.DAL.Repositories;
+using JoinTogether.Shared.DTOs;
 using JoinTogether.Tests.Helpers;
 using Moq;
 using Xunit;
@@ -21,9 +22,35 @@ public class QuizServiceTests
     public QuizServiceTests()
     {
         LocationTestData.ResetCounters();
-        _sut = new QuizService(_repoMock.Object, _attemptMock.Object);
+        _sut = new QuizService(_repoMock.Object, _attemptMock.Object); // SUT = System Under Test(QuizService)
     }
-    
+
+    // Helper: build answers where the first `correctCount` questions are answered
+    // correctly and the rest are answered with a wrong option.
+    private static List<QuizAnswerDto> BuildAnswers(Location location, int correctCount)
+    {
+        var answers = new List<QuizAnswerDto>();
+        var questions = location.QuizQuestions.ToList();
+
+        for (int i = 0; i < questions.Count; i++)
+        {
+            var q = questions[i];
+            bool answerCorrectly = i < correctCount;
+
+            // - Select the correct option if answerCorrectly is true, otherwise select a wrong option.
+            var option = answerCorrectly
+                ? q.Options.First(o => o.IsCorrect)
+                : q.Options.First(o => !o.IsCorrect);
+            // - Create a QuizAnswerDto for this question and selected option.
+            answers.Add(new QuizAnswerDto
+            {
+                QuestionId = q.Id,
+                SelectedOptionId = option.Id
+            });
+        }
+
+        return answers;
+    }
 
 
     // Test 1: Verify that GetQuizByLocationIdAsync returns null when the location is not found.
@@ -150,5 +177,173 @@ public class QuizServiceTests
 
         // Assert
         _repoMock.Verify(r => r.GetWithQuizAsync(42), Times.Once); // called exactly once with id 42
+    }
+
+
+    // Test 7: 3/4 correct = 75% -> should pass (threshold is 75%).
+    [Fact]
+    public async Task SubmitQuizAsync_75Percent_ShouldPass()
+    {
+        // Arrange
+        var location = LocationTestData.CreateLocation(name: "Test", questionCount: 4);
+        location.Id = 1;
+        _repoMock.Setup(r => r.GetWithQuizAsync(1)).ReturnsAsync(location);
+
+        var request = new SubmitQuizRequest
+        {
+            LocationId = 1,
+            Answers = BuildAnswers(location, correctCount: 3)
+        };
+
+        // Act
+        var result = await _sut.SubmitQuizAsync("user1", request);
+
+        // Assert
+        Assert.Equal(4, result.TotalQuestions);
+        Assert.Equal(3, result.CorrectAnswers);
+        Assert.Equal(75.0, result.ScorePercent);
+        Assert.True(result.Passed); 
+    }
+
+
+    // Test 8: 4/4 correct = 100% -> should pass.
+    [Fact]
+    public async Task SubmitQuizAsync_100Percent_ShouldPass()
+    {
+        // Arrange
+        var location = LocationTestData.CreateLocation(name: "Test", questionCount: 4);
+        location.Id = 2;
+        _repoMock.Setup(r => r.GetWithQuizAsync(2)).ReturnsAsync(location);
+
+        var request = new SubmitQuizRequest
+        {
+            LocationId = 2,
+            Answers = BuildAnswers(location, correctCount: 4)
+        };
+
+        // Act
+        var result = await _sut.SubmitQuizAsync("user1", request);
+
+        // Assert
+        Assert.Equal(100.0, result.ScorePercent);
+        Assert.True(result.Passed);
+    }
+
+
+    // Test 9: exactly 75% (3/4) -> should pass 
+    [Fact]
+    public async Task SubmitQuizAsync_JustBelow75Percent_ShouldNotPass()
+    {
+        // Arrange: 2/3 = 66.7% < 75%
+        var location = LocationTestData.CreateLocation(name: "Test", questionCount: 3);
+        location.Id = 3;
+        _repoMock.Setup(r => r.GetWithQuizAsync(3)).ReturnsAsync(location);
+
+        var request = new SubmitQuizRequest
+        {
+            LocationId = 3,
+            Answers = BuildAnswers(location, correctCount: 2)
+        };
+
+        // Act
+        var result = await _sut.SubmitQuizAsync("user1", request);
+
+        // Assert
+        Assert.Equal(66.7, result.ScorePercent);
+        Assert.False(result.Passed);
+    }
+
+
+    // Test 10: missing answers for some questions -> counted as wrong, no exception.
+    [Fact]
+    public async Task SubmitQuizAsync_MissingAnswers_CountAsWrong()
+    {
+        // Arrange
+        var location = LocationTestData.CreateLocation(name: "Test", questionCount: 3);
+        location.Id = 4;
+        _repoMock.Setup(r => r.GetWithQuizAsync(4)).ReturnsAsync(location);
+
+        var request = new SubmitQuizRequest
+        {
+            LocationId = 4,
+            Answers = new() // no answers submitted
+        };
+
+        // Act
+        var result = await _sut.SubmitQuizAsync("user1", request);
+
+        // Assert
+        Assert.Equal(3, result.TotalQuestions);
+        Assert.Equal(0, result.CorrectAnswers);
+        Assert.Equal(0.0, result.ScorePercent);
+        Assert.False(result.Passed);
+    }
+
+
+    // Test 11: location not found -> throws KeyNotFoundException.
+    [Fact]
+    public async Task SubmitQuizAsync_LocationNotFound_ThrowsKeyNotFoundException()
+    {
+        // Arrange
+        _repoMock.Setup(r => r.GetWithQuizAsync(99)).ReturnsAsync((Location?)null);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<KeyNotFoundException>(() =>
+            _sut.SubmitQuizAsync("user1", new SubmitQuizRequest { LocationId = 99 }));
+    }
+
+
+    // Test 12: a successful submission always saves a QuizAttempt, dont care about pass/not pass
+    [Fact]
+    public async Task SubmitQuizAsync_SavesQuizAttempt()
+    {
+        // Arrange
+        var location = LocationTestData.CreateLocation(name: "Test", questionCount: 2);
+        location.Id = 5;
+        _repoMock.Setup(r => r.GetWithQuizAsync(5)).ReturnsAsync(location);
+
+        // Act
+        await _sut.SubmitQuizAsync("user1", new SubmitQuizRequest
+        {
+            LocationId = 5,
+            Answers = BuildAnswers(location, correctCount: 1)
+        });
+
+        // Assert
+        _attemptMock.Verify(r => r.AddAsync(It.IsAny<QuizAttempt>()), Times.Once); // Verify that AddAsync was called once
+        _attemptMock.Verify(r => r.SaveChangesAsync(), Times.Once); // Verify that SaveChangesAsync was called once
+    }
+
+
+    // Test 13: the saved QuizAttempt has field values matching the computed result before saving,
+    // including UserId, LocationId, CorrectAnswers, TotalQuestions, and Passed.
+    [Fact]
+    public async Task SubmitQuizAsync_SavedAttempt_HasCorrectFieldValues()
+    {
+        // Arrange
+        var location = LocationTestData.CreateLocation(name: "Test", questionCount: 4);
+        location.Id = 6;
+        _repoMock.Setup(r => r.GetWithQuizAsync(6)).ReturnsAsync(location);
+
+        QuizAttempt? capturedAttempt = null;
+        _attemptMock
+            .Setup(r => r.AddAsync(It.IsAny<QuizAttempt>()))
+            .Callback<QuizAttempt>(a => capturedAttempt = a)
+            .Returns(Task.CompletedTask);
+
+        // Act
+        await _sut.SubmitQuizAsync("user42", new SubmitQuizRequest
+        {
+            LocationId = 6,
+            Answers = BuildAnswers(location, correctCount: 3)
+        });
+
+        // Assert
+        Assert.NotNull(capturedAttempt);
+        Assert.Equal("user42", capturedAttempt!.UserId);
+        Assert.Equal(6, capturedAttempt.LocationId);
+        Assert.Equal(3, capturedAttempt.CorrectAnswers);
+        Assert.Equal(4, capturedAttempt.TotalQuestions);
+        Assert.True(capturedAttempt.Passed);
     }
 }
