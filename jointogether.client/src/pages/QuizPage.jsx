@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getQuizByLocationId } from "../api/quizApi";
+import { getQuizByLocationId, submitQuiz } from "../api/quizApi";
 import { ApiError } from "../api/httpClient";
 import "./QuizPage.css";
 
@@ -23,8 +23,15 @@ export function QuizPage() {
 
   // Stores the selected option for every question, keyed by question id,
   // e.g. { 1: 3, 2: 7 } — so answers survive moving between questions
-  // and are all available at once when it's time to submit the quiz (US-09).
+  // and are all available at once when it's time to submit the quiz.
   const [answers, setAnswers] = useState({});
+
+  // Result of POST /Quiz/submit, plus submit-in-flight/error state.
+  // NOTE: `result` is only *stored* here.
+  const [result, setResult] = useState(null);
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -76,6 +83,8 @@ export function QuizPage() {
   const handleStart = () => {
     setQuestionIndex(0);
     setAnswers({});
+    setResult(null);
+    setSubmitError(null);
     setStage(STAGE.QUESTION);
   };
 
@@ -86,13 +95,47 @@ export function QuizPage() {
     }));
   };
 
+  // Turns the { questionId: selectedOptionId } map into the shape
+  // SubmitQuizRequest expects, POSTs it, and stores whatever QuizResultDto
+
+  const submitAnswers = async (finalAnswers) => {
+    const answerList = Object.entries(finalAnswers).map(
+      ([questionId, selectedOptionId]) => ({
+        questionId: Number(questionId),
+        selectedOptionId,
+      }),
+    );
+
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      const res = await submitQuiz({
+        locationId: Number(locationId),
+        answers: answerList,
+      });
+      setResult(res);
+      setStage(STAGE.DONE);
+    } catch (err) {
+      setSubmitError(
+        err instanceof ApiError
+          ? err.message
+          : "Kunde inte skicka in dina svar. Försök igen.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleNext = () => {
     if (selectedOptionId === null) return; // require an answer before advancing
 
     if (questionIndex + 1 < questions.length) {
       setQuestionIndex((i) => i + 1);
     } else {
-      setStage(STAGE.DONE);
+      // Last question just answered — submit to the backend instead of
+      // jumping straight to STAGE.DONE.
+      submitAnswers(answers);
     }
   };
 
@@ -116,7 +159,10 @@ export function QuizPage() {
           >
             Starta quiz
           </button>
-          <button className="quiz-start-card__back" onClick={() => navigate("/")}>
+          <button
+            className="quiz-start-card__back"
+            onClick={() => navigate("/")}
+          >
             Tillbaka till kartan
           </button>
         </div>
@@ -130,9 +176,13 @@ export function QuizPage() {
         <div className="quiz-start-card">
           <h1>Bra jobbat!</h1>
           <p className="quiz-start-card__description">
-            Du har gått igenom alla {questions.length} frågor om {quiz.locationName}.
+            Du har gått igenom alla {questions.length} frågor om{" "}
+            {quiz.locationName}.
           </p>
-          <button className="quiz-start-card__submit" onClick={() => navigate("/")}>
+          <button
+            className="quiz-start-card__submit"
+            onClick={() => navigate("/")}
+          >
             Tillbaka till kartan
           </button>
         </div>
@@ -185,15 +235,25 @@ export function QuizPage() {
         </div>
 
         {selectedOptionId === null && (
-          <p className="quiz-question-card__hint">Välj ett alternativ för att fortsätta.</p>
+          <p className="quiz-question-card__hint">
+            Välj ett alternativ för att fortsätta.
+          </p>
+        )}
+
+        {submitError && (
+          <p className="quiz-question-card__hint">{submitError}</p>
         )}
 
         <button
           className="quiz-start-card__submit"
           onClick={handleNext}
-          disabled={selectedOptionId === null}
+          disabled={selectedOptionId === null || isSubmitting}
         >
-          {questionIndex + 1 < questions.length ? "Nästa fråga" : "Avsluta quiz"}
+          {isSubmitting
+            ? "Skickar..."
+            : questionIndex + 1 < questions.length
+              ? "Nästa fråga"
+              : "Avsluta quiz"}
         </button>
       </div>
     </div>
