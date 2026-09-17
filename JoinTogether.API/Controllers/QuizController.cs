@@ -1,5 +1,7 @@
 ﻿using JoinTogether.BLL.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using JoinTogether.Shared.DTOs;
 
 namespace JoinTogether.API.Controllers;
 
@@ -28,5 +30,18 @@ public class QuizController : ControllerBase
             return NotFound(new { message = "This location has no quiz questions yet" });
 
         return Ok(quiz);
+    }
+
+    // POST api/Quiz/submit
+    [HttpPost("submit")]
+    public async Task<IActionResult> SubmitQuiz([FromBody] SubmitQuizRequest request)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (string.IsNullOrEmpty(userId))
+            return Unauthorized(new { message = "User is not authenticated" });
+
+        var result = await _quizService.SubmitQuizAsync(userId, request);
+        return Ok(result);
     }
 }
