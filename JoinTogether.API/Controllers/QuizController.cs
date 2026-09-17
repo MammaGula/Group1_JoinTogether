@@ -1,4 +1,7 @@
-﻿using JoinTogether.BLL.Interfaces;
+﻿using System.Security.Claims;
+using JoinTogether.BLL.Interfaces;
+using JoinTogether.Shared.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JoinTogether.API.Controllers;
@@ -28,5 +31,28 @@ public class QuizController : ControllerBase
             return NotFound(new { message = "This location has no quiz questions yet" });
 
         return Ok(quiz);
+    }
+
+    // POST api/Quiz/submit
+    // Requires a logged-in user (JWT) so the attempt can be tied to their account.
+    [HttpPost("submit")]
+    [Authorize]
+    public async Task<IActionResult> Submit(SubmitQuizRequest request)
+    {
+        // The user id was put into the JWT as ClaimTypes.NameIdentifier at login (see AuthService.CreateToken)
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId == null)
+            return Unauthorized();
+
+        try
+        {
+            var result = await _quizService.SubmitQuizAsync(userId, request);
+            return Ok(result);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            // Thrown by QuizService when request.LocationId doesn't exist
+            return NotFound(new { message = ex.Message });
+        }
     }
 }
