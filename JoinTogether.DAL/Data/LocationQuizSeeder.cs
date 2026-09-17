@@ -36,8 +36,8 @@ public static class LocationQuizSeeder
                 "glass building \"Calendar of Light\" (designed by the Danish architect Henning Larsen and inaugurated in 1997) " +
                 "and \"The Cylinder\" which connects the entrance, reception, and café. In 1997 the library was awarded " +
                 "the Kasper Salin Prize for its architecture.",
-            Latitude = 55.6046,
-            Longitude = 13.0016,
+            Latitude = 55.6005,
+            Longitude = 12.9944,
             Category = "Culture",
             QuizQuestions = new List<QuizQuestion>
             {
@@ -96,8 +96,8 @@ public static class LocationQuizSeeder
                 "The tower is approximately 190 meters tall, has 54 floors divided across nine stacked \"cubes\", and twists a total of 90 degrees from bottom to top. " +
                 "The building was designed by the Spanish-Swiss architect, artist, and engineer Santiago Calatrava, inspired by a human body in a twisting motion. " +
                 "Turning Torso was completed and inaugurated in 2005 and became a symbol of the transformation of the Western Harbour from an industrial area into a modern district.",
-            Latitude = 55.6135,
-            Longitude = 12.9761,
+            Latitude = 55.6133,
+            Longitude = 12.9764,
             Category = "Architecture",
             QuizQuestions = new List<QuizQuestion>
             {
