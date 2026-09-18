@@ -39,6 +39,17 @@ public class SubmitQuizRequest
     public List<QuizAnswerDto> Answers { get; set; } = new();
 }
 
+// Per-question feedback, included in QuizResultDto.
+// Only sent AFTER submission, so revealing CorrectOptionId here is safe —
+// it does not leak the answer before the user has committed to their choice.
+public class QuestionResultDto
+{
+    public int QuestionId { get; set; }
+    public bool IsCorrect { get; set; }
+    public int SelectedOptionId { get; set; }
+    public int CorrectOptionId { get; set; }
+}
+
 // Returned by POST api/Quiz/submit
 public class QuizResultDto
 {
@@ -46,4 +57,5 @@ public class QuizResultDto
     public int CorrectAnswers { get; set; }
     public double ScorePercent { get; set; }
     public bool Passed { get; set; }
+    public List<QuestionResultDto> Questions { get; set; } = new();
 }
