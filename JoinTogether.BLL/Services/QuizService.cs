@@ -59,16 +59,32 @@ public class QuizService : IQuizService
         int total = questions.Count;
         int correct = 0;
 
+        // 2.1 Per-question feedback (user should see which answers were right/wrong)
+        var questionResults = new List<QuestionResultDto>();
+
         // 3. Loop through each question and check if the submitted answer is correct
         foreach (var q in questions)
         {
             var submitted = request.Answers.FirstOrDefault(a => a.QuestionId == q.Id);
-            if (submitted == null) continue; // unanswered = wrong
 
             // 3.1 Find the correct option for the question
             var correctOption = q.Options.FirstOrDefault(o => o.IsCorrect);
-            if (correctOption != null && submitted.SelectedOptionId == correctOption.Id)
+
+            bool isCorrect = submitted != null
+                && correctOption != null
+                && submitted.SelectedOptionId == correctOption.Id;
+
+            // 3.2 Increment correct count if the answer is correct
+            if (isCorrect)
                 correct++;
+            // 3.3 Add the result for this question to the feedback list
+            questionResults.Add(new QuestionResultDto
+            {
+                QuestionId = q.Id,
+                IsCorrect = isCorrect,
+                SelectedOptionId = submitted?.SelectedOptionId ?? 0, // 0 = unanswered
+                CorrectOptionId = correctOption?.Id ?? 0
+            });
         }
 
         // 4. Calculate percentage score and determine pass/fail
@@ -94,7 +110,8 @@ public class QuizService : IQuizService
             TotalQuestions = total,
             CorrectAnswers = correct,
             ScorePercent = percent,
-            Passed = passed
+            Passed = passed,
+            Questions = questionResults
         };
     }
 }
