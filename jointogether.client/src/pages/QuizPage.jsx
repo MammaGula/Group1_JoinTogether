@@ -1,17 +1,13 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { 
-  getQuizByLocationId,
-  submitQuiz
- } from "../api/quizApi";
+import { getQuizByLocationId, submitQuiz } from "../api/quizApi";
 import { ApiError } from "../api/httpClient";
 import "./QuizPage.css";
-
 
 const STAGE = {
   START: "start",
   QUESTION: "question",
-  RESULT: "result"
+  RESULT: "result",
 };
 
 export function QuizPage() {
@@ -93,7 +89,7 @@ export function QuizPage() {
     }));
   };
 
-  const handleNext = async() => {
+  const handleNext = async () => {
     if (selectedOptionId === null || isSubmitting) return; // require an answer before advancing
 
     if (questionIndex + 1 < questions.length) {
@@ -105,31 +101,26 @@ export function QuizPage() {
     setIsSubmitting(true);
     setError(null);
 
-    try{
+    try {
       const formattedAnswers = Object.entries(answers).map(
         ([questionId, selectedOptionId]) => ({
           questionId: Number(questionId),
-          selectedOptionId: Number(selectedOptionId)
-        })
+          selectedOptionId: Number(selectedOptionId),
+        }),
       );
 
       // answers contains pervious questions
       // so add the current (last) answer too
       formattedAnswers.push({
         questionId: currentQuestion.id,
-        selectedOptionId: selectedOptionId
+        selectedOptionId: selectedOptionId,
       });
       const quizResult = await submitQuiz(locationId, formattedAnswers);
 
       setResult(quizResult);
       setStage(STAGE.RESULT);
-
     } catch (err) {
-      setError(
-        err instanceof ApiError
-          ? err.message
-          : "Could not submit quiz"
-      );
+      setError(err instanceof ApiError ? err.message : "Could not submit quiz");
     } finally {
       setIsSubmitting(false);
     }
@@ -155,7 +146,10 @@ export function QuizPage() {
           >
             Starta quiz
           </button>
-          <button className="quiz-start-card__back" onClick={() => navigate("/")}>
+          <button
+            className="quiz-start-card__back"
+            onClick={() => navigate("/")}
+          >
             Tillbaka till kartan
           </button>
         </div>
@@ -167,15 +161,58 @@ export function QuizPage() {
     return (
       <div className="quiz-page">
         <div className="quiz-start-card">
-          <h1>
-            {result.passed ? "Bra jobbat!" : "Försök igen!"}
-          </h1>
+          <h1>{result.passed ? "Bra jobbat!" : "Försök igen!"}</h1>
           <p className="quiz-start-card__score">
-            {/* {result.scorePercentage.toFixed(0)}%  */}
-            Du fick {typeof result?.scorePercent === "number"
+            Du fick{" "}
+            {typeof result?.scorePercent === "number"
               ? result.scorePercent.toFixed(0)
-              : "—"}% rätt
+              : "—"}
+            % rätt
           </p>
+
+          {/* shows which answers were right/wrong,
+              and the correct answer for anything missed. */}
+          {Array.isArray(result.questions) && result.questions.length > 0 && (
+            <ul className="quiz-feedback-list">
+              {result.questions.map((qResult) => {
+                const question = questions.find(
+                  (q) => q.id === qResult.questionId,
+                );
+                if (!question) return null;
+
+                const selectedOption = question.options.find(
+                  (o) => o.id === qResult.selectedOptionId,
+                );
+                const correctOption = question.options.find(
+                  (o) => o.id === qResult.correctOptionId,
+                );
+
+                return (
+                  <li
+                    key={qResult.questionId}
+                    className={
+                      "quiz-feedback-item" +
+                      (qResult.isCorrect
+                        ? " quiz-feedback-item--correct"
+                        : " quiz-feedback-item--incorrect")
+                    }
+                  >
+                    <p className="quiz-feedback-item__question">
+                      {qResult.isCorrect ? "✓" : "✗"} {question.text}
+                    </p>
+                    <p className="quiz-feedback-item__answer">
+                      Ditt svar: {selectedOption?.text ?? "Inget svar"}
+                    </p>
+                    {!qResult.isCorrect && (
+                      <p className="quiz-feedback-item__correct">
+                        Rätt svar: {correctOption?.text ?? "—"}
+                      </p>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          )}
 
           {result.passed ? (
             <>
@@ -193,10 +230,7 @@ export function QuizPage() {
                 Skapa aktivitet
               </button>
 
-              <button
-                type="button"
-                onClick={() => navigate("/")}
-              >
+              <button type="button" onClick={() => navigate("/")}>
                 Se aktiviteter
               </button>
             </>
@@ -206,19 +240,13 @@ export function QuizPage() {
                 Du behöver minst 75% för att gå vidare.
               </p>
 
-              <button
-                type="button"
-                onClick={handleStart}
-              >
+              <button type="button" onClick={handleStart}>
                 Försök igen
               </button>
             </>
           )}
 
-          <button
-            type="button"
-            onClick={() => navigate("/")}
-          >
+          <button type="button" onClick={() => navigate("/")}>
             Tillbaka till kartan
           </button>
         </div>
@@ -271,7 +299,9 @@ export function QuizPage() {
         </div>
 
         {selectedOptionId === null && (
-          <p className="quiz-question-card__hint">Välj ett alternativ för att fortsätta.</p>
+          <p className="quiz-question-card__hint">
+            Välj ett alternativ för att fortsätta.
+          </p>
         )}
 
         <button
@@ -279,11 +309,11 @@ export function QuizPage() {
           onClick={handleNext}
           disabled={selectedOptionId === null || isSubmitting}
         >
-            {isSubmitting
-              ? "Skickar..."
-              : questionIndex + 1 < questions.length
-                ? "Nästa fråga"
-                : "Avsluta quiz"}
+          {isSubmitting
+            ? "Skickar..."
+            : questionIndex + 1 < questions.length
+              ? "Nästa fråga"
+              : "Avsluta quiz"}
         </button>
       </div>
     </div>

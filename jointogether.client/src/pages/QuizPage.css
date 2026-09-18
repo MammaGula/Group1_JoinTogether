@@ -116,3 +116,47 @@
   color: #999;
   margin: 0 0 0.75rem;
 }
+
+/* Per-question feedback on the result screen (US-10) */
+.quiz-feedback-list {
+  list-style: none;
+  margin: 1rem 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: left;
+}
+
+.quiz-feedback-item {
+  border-radius: 8px;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid #e5e5e5;
+}
+
+.quiz-feedback-item--correct {
+  background: #f0fbf3;
+  border-color: #bfe6c8;
+}
+
+.quiz-feedback-item--incorrect {
+  background: #fdf2f2;
+  border-color: #f0c2c2;
+}
+
+.quiz-feedback-item__question {
+  font-weight: 500;
+  margin: 0 0 0.25rem;
+}
+
+.quiz-feedback-item__answer {
+  margin: 0;
+  font-size: 13px;
+  color: #444;
+}
+
+.quiz-feedback-item__correct {
+  margin: 0.15rem 0 0;
+  font-size: 13px;
+  color: #a13a3a;
+}
