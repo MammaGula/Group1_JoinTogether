@@ -230,7 +230,7 @@ public class QuizServiceTests
     }
 
 
-    // Test 9: exactly 75% (3/4) -> should pass 
+    // Test 9: 2/3=66.7% → Passed: false
     [Fact]
     public async Task SubmitQuizAsync_JustBelow75Percent_ShouldNotPass()
     {
