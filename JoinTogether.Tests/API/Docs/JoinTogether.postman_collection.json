@@ -132,6 +132,114 @@
         }
       },
       "response": []
+    },
+    {
+      "name": "SubmitQuiz",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{json_web_token_0fyn}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "   {\r\n     \"locationId\": 1,\r\n     \"answers\": [\r\n       { \"questionId\": 1, \"selectedOptionId\": 1 },\r\n       { \"questionId\": 2, \"selectedOptionId\": 1 }\r\n     ]\r\n   }",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://localhost:7211/api/Quiz/submit",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "7211",
+          "path": [
+            "api",
+            "Quiz",
+            "submit"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "AllLocation",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://localhost:7211/api/Location",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "7211",
+          "path": [
+            "api",
+            "Location"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "LocationById",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://localhost:7211/api/Location/1",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "7211",
+          "path": [
+            "api",
+            "Location",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "LocationByInvalidId",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://localhost:7211/api/Location/999",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "7211",
+          "path": [
+            "api",
+            "Location",
+            "999"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "json_web_token_0fyn",
+      "secret": true
     }
   ]
 }
