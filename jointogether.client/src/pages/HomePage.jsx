@@ -1,16 +1,3 @@
-// import { CityMapInteractive } from '../components/CityMapInteractive';
-
-// export function HomePage() {
-//   return (
-//     <div>
-//       <h1>JoinTogether</h1>
-//       <p>You are logged in!</p>
-
-//       <CityMapInteractive />
-//     </div>
-//   );
-// }
-
 import { useState, useEffect, useMemo } from 'react';
 import { CityMapInteractive } from '../components/CityMapInteractive';
 import { LocationListItem } from '../components/LocationListItem';
@@ -54,7 +41,10 @@ export function HomePage() {
 
         <nav className="home__tabs">
           <button className="home__tab home__tab--active">Utforska</button>
-          <button className="home__tab">Mina quiz</button>
+          {/* <button className="home__tab">Mina quiz</button> */}
+          <button className="home__tab" onClick={() => navigate('/activities/new')}>
+            Skapa aktivitet
+          </button>
         </nav>
 
         <div className="home__search">
@@ -63,9 +53,7 @@ export function HomePage() {
 
         <button className="home__logout" onClick={logout}>Logga ut</button>
         
-        <button className="home__tab" onClick={() => navigate('/activities/new')}>
-  Skapa aktivitet
-</button>
+
       </header>
 
       <div className="home__body">

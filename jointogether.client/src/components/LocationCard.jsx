@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getActivitiesByLocationId } from '../api/activityApi';
+import { getActivitiesByLocationId} from '../api/activityApi';
+import { getQuizStatus } from '../api/quizApi';
 
 function formatDateTime(value) {
     return new Date(value).toLocaleString('sv-SE', {
@@ -14,13 +15,36 @@ export default function LocationCard({ location, onClose }) {
     const [activities, setActivities] = useState([]);
     const [activitiesError, setActivitiesError] = useState(null);
 
+    const [hasPassed, setHasPassed] = useState(false);
+    const [quizStatusLoading, setQuizStatusLoading] = useState(true);
+
     useEffect(() => {
         if (!location) return;
 
         let cancelled = false;
         setActivities([]);
         setActivitiesError(null);
+        setHasPassed(false);
 
+        // check if the quiz has passed
+        getQuizStatus(location.id)
+            .then((status) => {
+                if (cancelled) return;
+                setHasPassed(status.hasPassed);
+            })
+            .catch((err) => {
+                if (!cancelled) {
+                    console.error('Failed to fetch quiz status:', err);
+                    setHasPassed(false);
+                }
+            })
+            .finally(() => {
+                if (cancelled) {
+                    setQuizStatusLoading(false);
+                }
+            });
+
+        // fetch activities for the location
         getActivitiesByLocationId(location.id)
             .then((list) => {
                 if (cancelled) return;
@@ -48,6 +72,12 @@ export default function LocationCard({ location, onClose }) {
         navigate(`/activities/new?locationId=${location.id}`);
     };
 
+    const handleViewActivities = () => {
+        document
+            .querySelector('.location-activities')
+            ?.scrollIntoView({ behavior: 'smooth' });
+    };
+
     return (
         <div className="location-card">
             <button onClick={onClose} aria-label="Close">
@@ -55,24 +85,40 @@ export default function LocationCard({ location, onClose }) {
             </button>
 
             <h2>{location.name}</h2>
+            
+            {quizStatusLoading ? (
+                <p>Laddar quizstatus...</p>
+            ) : hasPassed ? (
+                <div className="location-card_passed">
+                    <p> You have already passed this quiz.</p>
+                    <button className="start-quiz-button" onClick={handleViewActivities}>
+                        Visa activiteter
+                    </button>
 
-            <p className="location-card-description">
-                {location.description}
-            </p>
+                    <br/>
+                    <button
+                        className="start-quiz-button"
+                        onClick={handleCreateActivity}
+                    >
+                        Skapa activitet
+                    </button>
+                
+                </div>
+            ):(
+                <div className="location-card_quiz">
+                    <p className="location-card-description">
+                        {location.description}
+                    </p>
+                    <button className="start-quiz-button" onClick={handleStartQuiz}>
+                        Starta quiz
+                    </button>
+              </div>
+            )}
 
-            <button className="start-quiz-button" onClick={handleStartQuiz}>
-                Start quiz
-            </button>
 
             <div className="location-activities">
                 <div className="location-activities__header">
                     <h3>Aktiviteter</h3>
-                    <button
-                        className="location-activities__create"
-                        onClick={handleCreateActivity}
-                    >
-                        + Skapa här
-                    </button>
                 </div>
 
                 {activitiesError && (
@@ -90,13 +136,26 @@ export default function LocationCard({ location, onClose }) {
                 <ul className="location-activities__list">
                     {activities.map((a) => (
                         <li key={a.id} className="location-activity">
-                            <span className="location-activity__title">{a.title}</span>
-                            <span className="location-activity__meta">
-                                {formatDateTime(a.scheduledAt)} ·{' '}
-                                {a.isFull
-                                    ? 'Full'
-                                    : `${a.currentParticipants}/${a.maxParticipants} deltagare`}
-                            </span>
+                            <div>
+                                <span className="location-activity__title">{a.title}</span>
+                                <span className="location-activity__meta">
+                                    {formatDateTime(a.scheduledAt)} ·{' '}
+                                    {a.isFull
+                                        ? 'Full'
+                                        : `${a.currentParticipants}/${a.maxParticipants} deltagare`}
+                                </span>
+                            </div>
+
+                            {hasPassed && !a.isFull && (
+                                <button
+                                    className="location-activity__join"
+                                    onClick={() =>
+                                        handleJoinActivity(a.id)
+                                    }
+                                >
+                                    Gå med
+                                </button>
+                            )}
                         </li>
                     ))}
                 </ul>
