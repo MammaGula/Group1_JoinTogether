@@ -78,6 +78,10 @@ export default function LocationCard({ location, onClose }) {
             ?.scrollIntoView({ behavior: 'smooth' });
     };
 
+    const handleJoinActivity = (activityTitle, scheduledAt) => {
+        alert(`You have joined activity ${activityTitle} scheduled at ${scheduledAt}!`);
+    };
+
     return (
         <div className="location-card">
             <button onClick={onClose} aria-label="Close">
@@ -148,9 +152,9 @@ export default function LocationCard({ location, onClose }) {
 
                             {hasPassed && !a.isFull && (
                                 <button
-                                    className="location-activity__join"
+                                    className="start-quiz-button"
                                     onClick={() =>
-                                        handleJoinActivity(a.id)
+                                        handleJoinActivity(a.title, a.scheduledAt)
                                     }
                                 >
                                     Gå med
