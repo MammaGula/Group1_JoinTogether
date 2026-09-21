@@ -202,7 +202,7 @@ public class QuizServiceTests
         Assert.Equal(4, result.TotalQuestions);
         Assert.Equal(3, result.CorrectAnswers);
         Assert.Equal(75.0, result.ScorePercent);
-        Assert.True(result.Passed); 
+        Assert.True(result.Passed);
     }
 
 
@@ -345,5 +345,94 @@ public class QuizServiceTests
         Assert.Equal(3, capturedAttempt.CorrectAnswers);
         Assert.Equal(4, capturedAttempt.TotalQuestions);
         Assert.True(capturedAttempt.Passed);
+    }
+
+
+    // --- HasPassedQuizAsync coverage ---
+
+    // Test 14: user has a passed attempt for this exact location -> true.
+    [Fact]
+    public async Task HasPassedQuizAsync_UserPassedThisLocation_ReturnsTrue()
+    {
+        // Arrange
+        _attemptMock.Setup(r => r.GetAllAsync()).ReturnsAsync(new List<QuizAttempt>
+        {
+            new QuizAttempt { UserId = "user1", LocationId = 1, Passed = true }
+        });
+
+        // Act
+        var result = await _sut.HasPassedQuizAsync("user1", 1);
+
+        // Assert
+        Assert.True(result);
+    }
+
+
+    // Test 15: user has an attempt for this location, but it didn't pass -> false.
+    [Fact]
+    public async Task HasPassedQuizAsync_UserFailedThisLocation_ReturnsFalse()
+    {
+        // Arrange
+        _attemptMock.Setup(r => r.GetAllAsync()).ReturnsAsync(new List<QuizAttempt>
+        {
+            new QuizAttempt { UserId = "user1", LocationId = 1, Passed = false }
+        });
+
+        // Act
+        var result = await _sut.HasPassedQuizAsync("user1", 1);
+
+        // Assert
+        Assert.False(result);
+    }
+
+
+    // Test 16: a DIFFERENT user passed this location -> should not count for user1.
+    [Fact]
+    public async Task HasPassedQuizAsync_DifferentUserPassed_ReturnsFalse()
+    {
+        // Arrange
+        _attemptMock.Setup(r => r.GetAllAsync()).ReturnsAsync(new List<QuizAttempt>
+        {
+            new QuizAttempt { UserId = "user2", LocationId = 1, Passed = true }
+        });
+
+        // Act
+        var result = await _sut.HasPassedQuizAsync("user1", 1);
+
+        // Assert
+        Assert.False(result);
+    }
+
+
+    // Test 17: user passed a DIFFERENT location -> should not count for location 1.
+    [Fact]
+    public async Task HasPassedQuizAsync_PassedDifferentLocation_ReturnsFalse()
+    {
+        // Arrange
+        _attemptMock.Setup(r => r.GetAllAsync()).ReturnsAsync(new List<QuizAttempt>
+        {
+            new QuizAttempt { UserId = "user1", LocationId = 2, Passed = true }
+        });
+
+        // Act
+        var result = await _sut.HasPassedQuizAsync("user1", 1);
+
+        // Assert
+        Assert.False(result);
+    }
+
+
+    // Test 18: no attempts recorded at all -> false, no exception.
+    [Fact]
+    public async Task HasPassedQuizAsync_NoAttempts_ReturnsFalse()
+    {
+        // Arrange
+        _attemptMock.Setup(r => r.GetAllAsync()).ReturnsAsync(new List<QuizAttempt>());
+
+        // Act
+        var result = await _sut.HasPassedQuizAsync("user1", 1);
+
+        // Assert
+        Assert.False(result);
     }
 }
