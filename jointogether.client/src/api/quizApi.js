@@ -6,6 +6,11 @@ export function getQuizByLocationId(locationId) {
   return getJson(`/Quiz/location/${locationId}`);
 }
 
+// GET /Quiz/location/{locationId}/status - returns user's quiz status for the location (e.g., completed, in progress, not started)
+export function getQuizStatus(locationId) {
+  return getJson(`/Quiz/location/${locationId}/status`);
+}
+
 // POST /Quiz/submit — return QuizResultDto
 export function submitQuiz(locationId, answers) {
   return postJson(`/Quiz/submit`, { 
@@ -13,3 +18,5 @@ export function submitQuiz(locationId, answers) {
     answers 
   });
 }
+
+

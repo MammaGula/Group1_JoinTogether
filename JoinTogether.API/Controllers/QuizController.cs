@@ -33,6 +33,23 @@ public class QuizController : ControllerBase
         return Ok(quiz);
     }
 
+    // GET api/Quiz/location/5/status 
+    [Authorize]
+    [HttpGet("location/{locationId}/status")]
+    public async Task<IActionResult> GetQuizStatus(int locationId)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (string.IsNullOrEmpty(userId))
+            return Unauthorized(new { message = "User is not authenticated" });
+
+        var hasPassed = await _quizService.HasPassedQuizAsync(userId, locationId);
+        return Ok(new 
+            { 
+                hasPassed 
+            });
+    }
+
     // POST api/Quiz/submit
     [Authorize]
     [HttpPost("submit")]
