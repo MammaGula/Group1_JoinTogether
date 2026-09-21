@@ -29,7 +29,11 @@ builder.Services.AddDataAccess(builder.Configuration);
 // Add business logic services
 builder.Services.AddScoped<ILocationService, LocationService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IQuizService, JoinTogether.BLL.Services.QuizService>(); 
+builder.Services.AddScoped<IQuizService, QuizService>();
+builder.Services.AddScoped<IActivityService, ActivityService>();
+
+// Explicitly register authorization services (needed for [Authorize] on controllers)
+builder.Services.AddAuthorization();
 
 // Add JWT authentication
 var jwtSettings = builder.Configuration.GetSection("Jwt");
