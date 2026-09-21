@@ -114,4 +114,13 @@ public class QuizService : IQuizService
             Questions = questionResults
         };
     }
+
+
+
+    // --- Check whether a user has already passed a location's quiz (used to gate Activity creation/joining) ---
+    public async Task<bool> HasPassedQuizAsync(string userId, int locationId)
+    {
+        var attempts = await _attemptRepo.GetAllAsync();
+        return attempts.Any(a => a.UserId == userId && a.LocationId == locationId && a.Passed);
+    }
 }
