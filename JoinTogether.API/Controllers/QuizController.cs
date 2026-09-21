@@ -1,7 +1,8 @@
 ﻿using JoinTogether.BLL.Interfaces;
+using JoinTogether.Shared.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using JoinTogether.Shared.DTOs;
 
 namespace JoinTogether.API.Controllers;
 
@@ -33,6 +34,7 @@ public class QuizController : ControllerBase
     }
 
     // POST api/Quiz/submit
+    [Authorize]
     [HttpPost("submit")]
     public async Task<IActionResult> SubmitQuiz([FromBody] SubmitQuizRequest request)
     {
