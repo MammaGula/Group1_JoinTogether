@@ -79,4 +79,17 @@ public class ActivityController : ControllerBase
             return BadRequest(new { message = ex.Message });
         }
     }
+
+    // 4. GET api/Activity/5
+    // Full detail view of a single activity (creator name + participant names)
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(int id)
+    {
+        var activity = await _activityService.GetActivityByIdAsync(id);
+
+        if (activity == null)
+            return NotFound(new { message = $"No activity found for id {id}" });
+
+        return Ok(activity);
+    }
 }
