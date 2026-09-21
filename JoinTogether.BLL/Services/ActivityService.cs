@@ -11,15 +11,19 @@ public class ActivityService : IActivityService
     private readonly IGenericRepository<ActivityParticipant> _participantRepo; // Manages ActivityParticipant entities in the database
     private readonly ILocationRepository _locationRepo; // Manages Location entities in the database, including quiz questions and options
     private readonly IQuizService _quizService;  // Provides quiz-related functionality, such as checking if a user has passed a quiz for a specific location
+    private readonly IGenericRepository<ApplicationUser> _userRepo;
 
+    // Constructor to initialize the ActivityService with required repositories and services
     public ActivityService(
-        IGenericRepository<Activity> activityRepo,
-        IGenericRepository<ActivityParticipant> participantRepo,
-        ILocationRepository locationRepo,
-        IQuizService quizService)
+    IGenericRepository<Activity> activityRepo,
+    IGenericRepository<ActivityParticipant> participantRepo,
+    IGenericRepository<ApplicationUser> userRepo,        
+    ILocationRepository locationRepo,
+    IQuizService quizService)
     {
         _activityRepo = activityRepo ?? throw new ArgumentNullException(nameof(activityRepo));
         _participantRepo = participantRepo ?? throw new ArgumentNullException(nameof(participantRepo));
+        _userRepo = userRepo ?? throw new ArgumentNullException(nameof(userRepo));   // 
         _locationRepo = locationRepo ?? throw new ArgumentNullException(nameof(locationRepo));
         _quizService = quizService ?? throw new ArgumentNullException(nameof(quizService));
     }
@@ -136,5 +140,48 @@ public class ActivityService : IActivityService
 
         await _participantRepo.AddAsync(participant);
         await _participantRepo.SaveChangesAsync();
+    }
+
+
+
+    // Full detail view of a single activity (creator name + participant names) ---
+    public async Task<ActivityDetailDto?> GetActivityByIdAsync(int activityId)
+    {
+        var activity = await _activityRepo.GetByIdAsync(activityId);
+        if (activity == null)
+            return null;
+
+        var location = await _locationRepo.GetByIdAsync(activity.LocationId);
+
+        var allUsers = await _userRepo.GetAllAsync();
+        var allParticipants = await _participantRepo.GetAllAsync();
+
+        var creator = allUsers.FirstOrDefault(u => u.Id == activity.CreatedByUserId);
+
+        var participantUserIds = allParticipants
+            .Where(p => p.ActivityId == activityId)
+            .Select(p => p.UserId)
+            .ToList();
+
+        var participantNames = allUsers
+            .Where(u => participantUserIds.Contains(u.Id))
+            .Select(u => u.FullName ?? u.Email ?? "Unknown user")
+            .ToList();
+
+        return new ActivityDetailDto
+        {
+            Id = activity.Id,
+            Title = activity.Title,
+            Description = activity.Description,
+            ScheduledAt = activity.ScheduledAt,
+            MaxParticipants = activity.MaxParticipants,
+            CurrentParticipants = participantNames.Count,
+            IsFull = participantNames.Count >= activity.MaxParticipants,
+            LocationId = activity.LocationId,
+            LocationName = location?.Name ?? "Unknown location",
+            CreatedByUserId = activity.CreatedByUserId,
+            CreatedByName = creator?.FullName ?? creator?.Email ?? "Unknown user",
+            Participants = participantNames
+        };
     }
 }

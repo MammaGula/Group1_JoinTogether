@@ -12,4 +12,7 @@ public interface IActivityService
 
     // Join an existing activity
     Task JoinActivityAsync(string userId, int activityId);
+
+    // Full detail view of a single activity (creator name + participant names)
+    Task<ActivityDetailDto?> GetActivityByIdAsync(int activityId);
 }
