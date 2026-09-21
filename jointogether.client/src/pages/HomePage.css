@@ -236,6 +236,18 @@
   background: var(--accent-hover);
 }
 
+.location-card_passed {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.location-card_passed p {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 14px;
+}
+
 .location-activities {
   margin-top: 24px;
   padding-top: 16px;

@@ -102,7 +102,7 @@ export default function LocationCard({ location, onClose }) {
             Visa activiteter
           </button>
 
-          <br />
+
           <button className="start-quiz-button" onClick={handleCreateActivity}>
             Skapa activitet
           </button>
