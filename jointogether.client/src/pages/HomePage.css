@@ -254,4 +254,75 @@
   .home-map {
     height: 400px;
   }
+
+  .location-activities {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-soft);
+}
+
+.location-activities__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.location-activities__header h3 {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.location-activities__create {
+  border: none;
+  background: var(--accent-soft);
+  color: var(--accent-hover);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.location-activities__create:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+.location-activities__empty {
+  font-size: 13px;
+  color: var(--ink-faint);
+}
+
+.location-activities__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.location-activity {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  background: var(--surface);
+}
+
+.location-activity__title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.location-activity__meta {
+  font-size: 12px;
+  color: var(--ink-soft);
+}
 }
