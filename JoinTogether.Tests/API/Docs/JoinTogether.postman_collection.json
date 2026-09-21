@@ -134,46 +134,6 @@
       "response": []
     },
     {
-      "name": "SubmitQuiz",
-      "request": {
-        "auth": {
-          "type": "bearer",
-          "bearer": [
-            {
-              "key": "token",
-              "value": "{{json_web_token_0fyn}}",
-              "type": "string"
-            }
-          ]
-        },
-        "method": "POST",
-        "header": [],
-        "body": {
-          "mode": "raw",
-          "raw": "   {\r\n     \"locationId\": 1,\r\n     \"answers\": [\r\n       { \"questionId\": 1, \"selectedOptionId\": 1 },\r\n       { \"questionId\": 2, \"selectedOptionId\": 1 }\r\n     ]\r\n   }",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        },
-        "url": {
-          "raw": "https://localhost:7211/api/Quiz/submit",
-          "protocol": "https",
-          "host": [
-            "localhost"
-          ],
-          "port": "7211",
-          "path": [
-            "api",
-            "Quiz",
-            "submit"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
       "name": "AllLocation",
       "request": {
         "method": "GET",
@@ -234,11 +194,533 @@
         }
       },
       "response": []
+    },
+    {
+      "name": "SubmitQuiz - Fail",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{user1Token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"locationId\": 1,\r\n  \"answers\": []\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://localhost:7211/api/Quiz/submit",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "7211",
+          "path": [
+            "api",
+            "Quiz",
+            "submit"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "SubmitQuiz - NoToken",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "https://localhost:7211/api/Quiz/submit",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "7211",
+          "path": [
+            "api",
+            "Quiz",
+            "submit"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "SubmitQuiz - UnknownIds",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{user1Token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"locationId\": 1,\r\n  \"answers\": [\r\n    { \"questionId\": 99999, \"selectedOptionId\": 99999 }\r\n  ]\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://localhost:7211/api/Quiz/submit",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "7211",
+          "path": [
+            "api",
+            "Quiz",
+            "submit"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "CreateActivity - Blocked",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{user1Token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"title\":\"Test\",\r\n    \"description\":\"\",\r\n    \"scheduledAt\":\"2026-10-01T18:00:00Z\",\r\n    \"maxParticipants\":5,\r\n    \"locationId\":1\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://localhost:7211/api/Activity",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "7211",
+          "path": [
+            "api",
+            "Activity"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "SubmitQuiz-Pass75",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{user1Token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "   {\r\n  \"locationId\": 1,\r\n  \"answers\": [\r\n    { \"questionId\": 1, \"selectedOptionId\": 2 },\r\n    { \"questionId\": 2, \"selectedOptionId\": 6},\r\n    { \"questionId\": 3, \"selectedOptionId\": 9 },\r\n    { \"questionId\": 4, \"selectedOptionId\": 13 }\r\n  ]\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://localhost:7211/api/Quiz/submit",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "7211",
+          "path": [
+            "api",
+            "Quiz",
+            "submit"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "CreateActivity - Success",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{user1Token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"title\":\"Test\",\r\n    \"description\":\"\",\r\n    \"scheduledAt\":\"2026-10-01T18:00:00Z\",\r\n    \"maxParticipants\":5,\r\n    \"locationId\":1\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://localhost:7211/api/Activity",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "7211",
+          "path": [
+            "api",
+            "Activity"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GetActivitiesByLocation",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://localhost:7211/api/Activity/location/1",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "7211",
+          "path": [
+            "api",
+            "Activity",
+            "location",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GetActivityById",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://localhost:7211/api/Activity/1",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "7211",
+          "path": [
+            "api",
+            "Activity",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GetActivityById - Invalid",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://localhost:7211/api/Activity/99999",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "7211",
+          "path": [
+            "api",
+            "Activity",
+            "99999"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Register-NewUser",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"fullName\": \"Test NewUser\",\r\n    \"email\": \"newuser@example.com\", \r\n    \"password\": \"Test123!\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://localhost:7211/api/auth/register",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "7211",
+          "path": [
+            "api",
+            "auth",
+            "register"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Login-NewUser",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{newUserToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"email\": \"newuser@example.com\", \"password\": \"Test123!\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://localhost:7211/api/auth/login",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "7211",
+          "path": [
+            "api",
+            "auth",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "SubmitQuiz-Pass75-User2",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{newUserToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "   {\r\n  \"locationId\": 1,\r\n  \"answers\": [\r\n    { \"questionId\": 1, \"selectedOptionId\": 2 },\r\n    { \"questionId\": 2, \"selectedOptionId\": 6},\r\n    { \"questionId\": 3, \"selectedOptionId\": 9 },\r\n    { \"questionId\": 4, \"selectedOptionId\": 13 }\r\n  ]\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://localhost:7211/api/Quiz/submit",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "7211",
+          "path": [
+            "api",
+            "Quiz",
+            "submit"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "JoinActivity - Success",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{newUserToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "https://localhost:7211/api/Activity/1/join",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "7211",
+          "path": [
+            "api",
+            "Activity",
+            "1",
+            "join"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "JoinActivity - Duplicate",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{newUserToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "https://localhost:7211/api/Activity/1/join",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "7211",
+          "path": [
+            "api",
+            "Activity",
+            "1",
+            "join"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "JoinActivity - NotFound",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{newUserToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "https://localhost:7211/api/Activity/99999/join",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "7211",
+          "path": [
+            "api",
+            "Activity",
+            "99999",
+            "join"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "CreateActivity - NoToken",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"title\":\"Test\",\r\n    \"description\":\"\",\r\n    \"scheduledAt\":\"2026-10-01T18:00:00Z\",\r\n    \"maxParticipants\":5,\r\n    \"locationId\":1\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://localhost:7211/api/Activity",
+          "protocol": "https",
+          "host": [
+            "localhost"
+          ],
+          "port": "7211",
+          "path": [
+            "api",
+            "Activity"
+          ]
+        }
+      },
+      "response": []
     }
   ],
   "variable": [
     {
-      "key": "json_web_token_0fyn",
+      "key": "user1Token",
+      "secret": true
+    },
+    {
+      "key": "newUserToken",
       "secret": true
     }
   ]
