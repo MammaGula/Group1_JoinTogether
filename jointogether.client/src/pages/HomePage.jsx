@@ -18,11 +18,13 @@ import LocationCard from '../components/LocationCard';
 import { getLocations } from '../api/locationApi';
 import { useAuth } from '../context/AuthContext';
 import './HomePage.css';
+import { useNavigate } from 'react-router-dom';
 
 export function HomePage() {
   const [locations, setLocations] = useState([]);
   const [error, setError] = useState(null);
   const [selectedLocation, setSelectedLocation] = useState(null);
+  const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState('Alla');
   const { logout } = useAuth();
 
@@ -60,6 +62,10 @@ export function HomePage() {
         </div>
 
         <button className="home__logout" onClick={logout}>Logga ut</button>
+        
+        <button className="home__tab" onClick={() => navigate('/activities/new')}>
+  Skapa aktivitet
+</button>
       </header>
 
       <div className="home__body">

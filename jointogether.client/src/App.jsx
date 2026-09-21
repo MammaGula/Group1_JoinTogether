@@ -13,6 +13,7 @@ import "./pages/QuizPage.css";
 import { QuizPage } from "./pages/QuizPage";
 import Navbar from "./components/Navbar";
 import "./pages/HomePage.css";
+import { CreateActivityPage } from "./pages/CreateActivityPage";
 
 // Keys QuizPage on locationId so navigating from one location's quiz to
 // another (a param-only route change) fully remounts it instead of leaving
@@ -38,6 +39,10 @@ function AppRoutes() {
           path="/quiz/:locationId"
           element={authed ? <QuizPageRoute /> : <Navigate to="/" replace />}
         />
+        <Route
+  path="/activities/new"
+  element={authed ? <CreateActivityPage /> : <Navigate to="/" replace />}
+/>
       </Routes>
     </BrowserRouter>
   );
