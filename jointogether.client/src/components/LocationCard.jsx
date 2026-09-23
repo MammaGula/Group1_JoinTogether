@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getActivitiesByLocationId } from "../api/activityApi";
+import { getActivitiesByLocationId, joinActivity } from "../api/activityApi";
 import { getQuizStatus } from "../api/quizApi";
 
 function formatDateTime(value) {
   return new Date(value).toLocaleString("sv-SE", {
-    dateStyle: "medium",
-    timeStyle: "short",
+    dateStyle: 'medium',
+    timeStyle: 'short',
   });
 }
 
@@ -79,11 +79,33 @@ export default function LocationCard({ location, onClose }) {
       ?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const handleJoinActivity = (activityTitle, scheduledAt) => {
-    alert(
-      `You have joined activity ${activityTitle} scheduled at ${scheduledAt}!`,
-    );
-  };
+const loadActivities = async () => {
+  try {
+    const data = await getActivitiesByLocationId(location.id);
+    setActivities(data);
+  } catch (error) {
+    console.error("Could not load activities:", error);
+  }
+};
+
+  const handleJoinActivity = async (
+    activityId,
+    activityTitle, 
+    scheduledAt) => {
+      try{
+        await joinActivity(activityId);
+        await loadActivities(); // Refresh the activities list after joining
+        
+        alert(
+          `Du har gått med i aktiviteten ${activityTitle} som är schemalagd ${scheduledAt}!`,
+        );
+
+      } catch (error) {
+        console.error("Kunde inte gå med i aktivitet:", error);
+        alert(error.message || "Kunde inte gå med i aktivitet.");
+      }
+    };
+
 
   return (
     <div className="location-card">
@@ -97,7 +119,7 @@ export default function LocationCard({ location, onClose }) {
         <p>Laddar quizstatus...</p>
       ) : hasPassed ? (
         <div className="location-card_passed">
-          <p> You have already passed this quiz.</p>
+          <p> Du har redan passerat detta quiz.</p>
           <button className="start-quiz-button" onClick={handleViewActivities}>
             Visa activiteter
           </button>
@@ -138,6 +160,7 @@ export default function LocationCard({ location, onClose }) {
             <li key={a.id} className="location-activity">
               <div>
                 <span className="location-activity__title">{a.title}</span>
+                <br/>
                 <span className="location-activity__meta">
                   {formatDateTime(a.scheduledAt)} ·{" "}
                   {a.isFull
@@ -149,7 +172,10 @@ export default function LocationCard({ location, onClose }) {
               {hasPassed && !a.isFull && (
                 <button
                   className="start-quiz-button"
-                  onClick={() => handleJoinActivity(a.title, a.scheduledAt)}
+                  onClick={() => handleJoinActivity(
+                    a.id,
+                    a.title, 
+                    a.scheduledAt)}
                 >
                   Gå med
                 </button>
