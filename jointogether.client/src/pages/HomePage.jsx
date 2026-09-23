@@ -35,8 +35,8 @@ export function HomePage() {
     <div className="home">
       <header className="home__header">
         <div className="home__brand">
-          <span className="home__brand-dot" />
-          <h1>Quizkartan</h1>
+          <span className="auth-info__brand-dot" />
+          <span>JoinTogether</span>
         </div>
 
         <nav className="home__tabs">

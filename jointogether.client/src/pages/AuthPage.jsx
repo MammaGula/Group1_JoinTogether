@@ -264,7 +264,7 @@ export function AuthPage() {
       <section className="auth-info">
         <div className="auth-info__brand">
           <span className="auth-info__brand-dot" />
-          <span>Aktivitetskartan</span>
+          <span>JoinTogether</span>
         </div>
 
         <div className="auth-info__copy">

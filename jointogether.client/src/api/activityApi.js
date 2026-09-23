@@ -15,3 +15,9 @@ export function createActivity({ title, scheduledAt, maxParticipants, locationId
 export function getActivitiesByLocationId(locationId) {
   return getJson(`/Activity/location/${locationId}`);
 }
+
+
+// POST /Activity/{activityId}/join — returns ActivityDto
+export function joinActivity(activityId) {
+  return postJson(`/Activity/${activityId}/join`);
+}
