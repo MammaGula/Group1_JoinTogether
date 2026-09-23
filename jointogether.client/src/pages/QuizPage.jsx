@@ -320,8 +320,6 @@
 //   );
 // }
 
-
-
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getQuizByLocationId, submitQuiz } from "../api/quizApi";
@@ -390,7 +388,10 @@ export function QuizPage() {
       <div className="quiz-page">
         <div className="quiz-card">
           <p className="quiz-start-card__description">{error}</p>
-          <button className="quiz-btn quiz-btn--ghost" onClick={() => navigate("/")}>
+          <button
+            className="quiz-btn quiz-btn--ghost"
+            onClick={() => navigate("/")}
+          >
             Tillbaka till kartan
           </button>
         </div>
@@ -499,11 +500,20 @@ export function QuizPage() {
 
     return (
       <div className="quiz-page">
-        <div className={"quiz-card quiz-result-card" + (result.passed ? " quiz-result-card--passed" : " quiz-result-card--failed")}>
+        <div
+          className={
+            "quiz-card quiz-result-card" +
+            (result.passed
+              ? " quiz-result-card--passed"
+              : " quiz-result-card--failed")
+          }
+        >
           <span
             className={
               "quiz-result__badge" +
-              (result.passed ? " quiz-result__badge--passed" : " quiz-result__badge--failed")
+              (result.passed
+                ? " quiz-result__badge--passed"
+                : " quiz-result__badge--failed")
             }
           >
             {result.passed ? "Godkänt" : "Ej godkänt"}
@@ -512,7 +522,9 @@ export function QuizPage() {
           <div
             className={
               "quiz-result__score" +
-              (result.passed ? " quiz-result__score--passed" : " quiz-result__score--failed")
+              (result.passed
+                ? " quiz-result__score--passed"
+                : " quiz-result__score--failed")
             }
           >
             <span className="quiz-result__score-number">{scoreLabel}%</span>
@@ -580,10 +592,9 @@ export function QuizPage() {
                 <button
                   className="quiz-btn quiz-btn--primary"
                   type="button"
-                  onClick={() => {
-                    // Later: navigate to activity creation
-                    navigate("/");
-                  }}
+                  onClick={() =>
+                    navigate(`/activities/new?locationId=${locationId}`)
+                  }
                 >
                   Skapa aktivitet
                 </button>
@@ -604,14 +615,22 @@ export function QuizPage() {
               </p>
 
               <div className="quiz-result__actions">
-                <button className="quiz-btn quiz-btn--primary" type="button" onClick={handleStart}>
+                <button
+                  className="quiz-btn quiz-btn--primary"
+                  type="button"
+                  onClick={handleStart}
+                >
                   Försök igen
                 </button>
               </div>
             </>
           )}
 
-          <button className="quiz-btn quiz-btn--ghost" type="button" onClick={() => navigate("/")}>
+          <button
+            className="quiz-btn quiz-btn--ghost"
+            type="button"
+            onClick={() => navigate("/")}
+          >
             Tillbaka till kartan
           </button>
         </div>

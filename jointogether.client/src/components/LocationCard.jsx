@@ -79,10 +79,14 @@ export default function LocationCard({ location, onClose }) {
       ?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const loadActivities = async () => {
-    const data = await getActivitiesByLocationId(locationId);
+const loadActivities = async () => {
+  try {
+    const data = await getActivitiesByLocationId(location.id);
     setActivities(data);
-  };
+  } catch (error) {
+    console.error("Could not load activities:", error);
+  }
+};
 
   const handleJoinActivity = async (
     activityId,
@@ -90,13 +94,15 @@ export default function LocationCard({ location, onClose }) {
     scheduledAt) => {
       try{
         await joinActivity(activityId);
-        await loadActivities();
+        await loadActivities(); // Refresh the activities list after joining
         
         alert(
           `Du har gått med i aktiviteten ${activityTitle} som är schemalagd ${scheduledAt}!`,
         );
+
       } catch (error) {
         console.error("Kunde inte gå med i aktivitet:", error);
+        alert(error.message || "Kunde inte gå med i aktivitet.");
       }
     };
 
@@ -154,6 +160,7 @@ export default function LocationCard({ location, onClose }) {
             <li key={a.id} className="location-activity">
               <div>
                 <span className="location-activity__title">{a.title}</span>
+                <br/>
                 <span className="location-activity__meta">
                   {formatDateTime(a.scheduledAt)} ·{" "}
                   {a.isFull
